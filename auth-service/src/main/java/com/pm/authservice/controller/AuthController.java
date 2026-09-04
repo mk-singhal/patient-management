@@ -36,4 +36,19 @@ public class AuthController {
         return ResponseEntity.ok(loginResponseDTO);
     }
 
+    @Operation(summary = "Validate Token")
+    @RequestMapping(path = "/validate", method = RequestMethod.GET)
+    public ResponseEntity<Void> validateToken(
+            @RequestHeader("Authorization") String authHeader) {
+
+        // Authorization: Bearer <token>
+        if (authHeader ==  null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        return authService.validateToken(authHeader.substring(7))
+                ? ResponseEntity.ok().build()
+                : ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
 }
